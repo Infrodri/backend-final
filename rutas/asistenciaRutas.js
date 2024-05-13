@@ -1,9 +1,8 @@
 const express = require('express');
 const rutas = express.Router();
 const AsistenciaModel = require('../models/Asistencia');
-//fgfg
 
-//endpoint 1.  traer todas las cantidad de cusos
+//endpoint 1.  traer todas las cantidad de los cusos
 rutas.get('/getAsistencia', async (req, res) => {
     try  {
         const asistencia = await  AsistenciaModel.find();
@@ -12,7 +11,7 @@ rutas.get('/getAsistencia', async (req, res) => {
         res.status(500).json({mensaje: error.message});
     }
 });
-//endpoint 2. Crear
+//endpoint 2. Crear Datos de la asistencia
 rutas.post('/crear', async (req, res) => {
     const asistencia = new AsistenciaModel({
         curso: req.body.curso,
@@ -26,7 +25,7 @@ rutas.post('/crear', async (req, res) => {
         res.status(400).json({ mensaje :  error.message})
     }
 });
-//endpoint 3. Editar
+//endpoint 3. Editar la asistencia Curso materias o cantidad
 rutas.put('/editar/:id', async (req, res) => {
     try {
         const asistenciaEditada = await AsistenciaModel.findByIdAndUpdate(req.params.id, req.body, { new : true });
@@ -39,7 +38,7 @@ rutas.put('/editar/:id', async (req, res) => {
         res.status(400).json({ mensaje :  error.message})
     }
 })
-//ENDPOINT 4. eliminar
+//ENDPOINT 4. eliminar la asistencia a un curso especifico
 rutas.delete('/eliminar/:id',async (req, res) => {
     try {
        const asistenciaEliminada = await AsistenciaModel.findByIdAndDelete(req.params.id);
