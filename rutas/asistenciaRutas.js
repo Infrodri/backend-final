@@ -1,7 +1,7 @@
 const express = require('express');
 const rutas = express.Router();
 const AsistenciaModel = require('../models/Asistencia');
-
+//fgfg
 
 //endpoint 1.  traer todas las cantidad de cusos
 rutas.get('/getAsistencia', async (req, res) => {
