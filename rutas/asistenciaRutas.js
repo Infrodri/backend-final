@@ -52,8 +52,9 @@ rutas.delete('/eliminar/:id',async (req, res) => {
     }
 });
 // - 5. obtener una asistencia por su ID
-rutas.get('/asistencia/:id', async (req, res) => {
+rutas.get('/obtenerAsistencia/:id', async (req, res) => {
     try {
+        console.log("entro a get")
         const asistencia = await AsistenciaModel.findById(req.params.id);
         if (!asistencia)
             return res.status(404).json({ mensaje : 'ASistencia no encontrada!!!'});
@@ -63,11 +64,11 @@ rutas.get('/asistencia/:id', async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - obtener Asistencia por una materia especifica
-rutas.get('/ASistencaiPorMateria/:Materias', async (req, res) => {
+// - obtener Asistencia por una materias especifica
+rutas.get('/AsistencaiPorMaterias/:Materias', async (req, res) => {
     try {
-        const AsistenciaMateria = await AsistenciaModel.find({ materias: req.params.materias});
-        return res.json(AsistenciaMateria);
+        const AsistenciaMaterias = await AsistenciaModel.find({ materias: req.params.materias});
+        return res.json(AsistenciaMaterias);
     } catch(error) {
         res.status(500).json({ mensaje :  error.message})
     }
@@ -111,10 +112,10 @@ rutas.get('/asistenciaPorCantidad/:cantidad', async (req, res) => {
 });
 
 //endpoint 6 - obtener asistencia por un materias especificas
-rutas.get('/asistenciaPorMAterias/:materias', async (req, res) => {
+rutas.get('/asistenciaPorMaterias/:materias', async (req, res) => {
     try {
         const asistenciaCurso = await AsistenciaModel.find({ materias: new RegExp(req.params.materias, 'i')});
-        return res.json(asistenciaMaterias);
+        return res.json(AsistenciaMaterias);
     } catch(error) {
         res.status(500).json({ mensaje :  error.message})
     }
