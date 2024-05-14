@@ -5,15 +5,24 @@ Sistema de Asistencia para Cursos
 
 Objetivo
 
-El objetivo principal de este sistema es gestionar la asistencia de los estudiantes a los cursos ofrecidos por una institución educativa. El sistema permite registrar la asistencia de los estudiantes a cada curso, así como generar informes y estadísticas sobre la asistencia por curso y año.
+El objetivo principal de este sistema es gestionar algunos datos registrados en la asistencia a cursos de los estudiantes cuales en cada curso existen ciertas materias ofrecidas por una institución educativa. El sistema permite registrar lel el nombre del cursos que ofrece a los estudiantes
+las materias que corresponden en cada curso
+la cantidad de estudiantes que se registraron en el curso
+la fecha de inici
+fecha de finalizacion.
 
-Especificaciones
+Especificaciones y Funcionalidades
 
-Funcionalidades
-Registro de asistencia: El sistema permite registrar la asistencia de los estudiantes a cada sesión de curso.
-Gestión de cursos: Permite crear, actualizar y eliminar cursos. Cada curso está asociado a un fecha de inicio y final y tiene una varias de materias por curso.
-Consulta de asistencia por curso: Los usuarios pueden consultar el nombre de la materia de un curso específico.
-Estadísticas de cantidad de cursos
+Mostrar los cursos:
+crear Datos registrados para la asistencia de cursos
+editar datos ya registrados por asistencia a curso
+eliminar Asistencia del curso
+obtener Asistencia al curso por ID
+asistencia de los cursos con la maeria
+eliminar Todas las asistencias que la cantidad sea menores de 10
+Obtener las asistencias ordenadas por la cantidad de materias
+
+
 Tecnologías Utilizadas
 Node.js y Express para el backend.
 MongoDB como base de datos  para almacenar la información de los cursos.
