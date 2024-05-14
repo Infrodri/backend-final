@@ -24,6 +24,7 @@ Obtener las asistencias ordenadas por la cantidad de materias
 
 
 Tecnologías Utilizadas
+
 Node.js y Express para el backend.
 MongoDB como base de datos  para almacenar la información de los cursos.
 Mongoose para modelar y gestionar los datos en la base de datos MongoDB.
