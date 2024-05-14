@@ -88,19 +88,18 @@ rutas.delete('/eliminarPorCantidad/:cantidad', async (req, res) => {
 
         const { deletedCount } = await AsistenciaModel.deleteMany({ cantidad: { $lt: cantidad } });   // Buscar y eliminar por la cantidad menor a "X"
 
-        // Verificar si se eliminaron 
-        if (deletedCount === 0) {
+        if (deletedCount === 0) {        // Verificar si se eliminaron 
+
             return res.status(404).json({ mensaje: `No se encontraron asistencias con cantidad menor a ${cantidad}.` });
         }
 
-        // Devolver un mensaje indicando que las asistencias han sido eliminadas
         return res.json({ mensaje: `Se han eliminado ${deletedCount} asistencias con cantidad menor a ${cantidad}.` });
     } catch(error) {
         res.status(500).json({ mensaje: error.message });
     }
 });
 
-// - 8. contar el numero total de asistencia de los cursos
+// - 8. total Asistencia de todos lo cursos
 rutas.get('/totalAsistencia', async (req, res) => {
     try {
         const total = await AsistenciaModel.countDocuments();
@@ -109,7 +108,7 @@ rutas.get('/totalAsistencia', async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - 9.obtener asistencia ordenadas por curso ascendente
+// - 9.Obtener las asistencias ordenadas por la cantidad de materias
 // query.sort({ field: 'asc', test: -1 });
 rutas.get('/ordenarAsistencia', async (req, res) => {
     try {
