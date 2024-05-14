@@ -16,7 +16,9 @@ rutas.post('/crear', async (req, res) => {
     const asistencia = new AsistenciaModel({
         curso: req.body.curso,
         materias: req.body.materias,
-        cantidad: req.body.cantidad
+        cantidad: req.body.cantidad,
+        fechaInicio: req.body.fechaInicio,
+        fechaFinal: req.body.fechaFinal
     })
     try {
         const nuevaAsistencia = await asistencia.save();
@@ -64,25 +66,41 @@ rutas.get('/obtenerAsistencia/:id', async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - obtener Asistencia por una materias especifica
-rutas.get('/AsistencaiPorMaterias/:Materias', async (req, res) => {
+// - 6. obtener Asistencia de cada curso que lleva la materias especifica
+rutas.get('/materia/:materias', async (req, res) => {
     try {
-        const AsistenciaMaterias = await AsistenciaModel.find({ materias: req.params.materias});
+        const AsistenciaMaterias = await AsistenciaModel.find({ materias: new RegExp(req.params.materias, 'i') });
         return res.json(AsistenciaMaterias);
     } catch(error) {
-        res.status(500).json({ mensaje :  error.message})
+        res.status(500).json({ mensaje: error.message });
     }
 });
-// - eliminar todas las asistencias
-rutas.delete('/eliminarTodas', async (req, res) => {
+
+// - 7. eliminar todas las asistencias de las materias que sean menores a la cantidad X
+rutas.delete('/eliminarPorCantidad/:cantidad', async (req, res) => {
     try {
-        await AsistenciaModel.deleteMany({ });
-        return res.json({mensaje: "Todas las asistencias han sido eliminadas"});
+        const cantidad = parseInt(req.params.cantidad);
+
+        if (isNaN(cantidad)) {        // Verificar si la cantidad proporcionada es un número válido
+
+            return res.status(400).json({ mensaje: 'Por favor, proporcione una cantidad válida.' });
+        }
+
+        const { deletedCount } = await AsistenciaModel.deleteMany({ cantidad: { $lt: cantidad } });   // Buscar y eliminar por la cantidad menor a "X"
+
+        // Verificar si se eliminaron 
+        if (deletedCount === 0) {
+            return res.status(404).json({ mensaje: `No se encontraron asistencias con cantidad menor a ${cantidad}.` });
+        }
+
+        // Devolver un mensaje indicando que las asistencias han sido eliminadas
+        return res.json({ mensaje: `Se han eliminado ${deletedCount} asistencias con cantidad menor a ${cantidad}.` });
     } catch(error) {
-        res.status(500).json({ mensaje :  error.message})
+        res.status(500).json({ mensaje: error.message });
     }
 });
-// - contar el numero total de asistencia
+
+// - 8. contar el numero total de asistencia de los cursos
 rutas.get('/totalAsistencia', async (req, res) => {
     try {
         const total = await AsistenciaModel.countDocuments();
@@ -91,7 +109,7 @@ rutas.get('/totalAsistencia', async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - obtener asistencia ordenadas por curso ascendente
+// - 9.obtener asistencia ordenadas por curso ascendente
 // query.sort({ field: 'asc', test: -1 });
 rutas.get('/ordenarAsistencia', async (req, res) => {
     try {
@@ -101,7 +119,7 @@ rutas.get('/ordenarAsistencia', async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - obtener asistencia por cantidad
+// - 10. obtener asistencia por cantidad
 rutas.get('/asistenciaPorCantidad/:cantidad', async (req, res) => {
     try {
        const asistencia = await AsistenciaModel.find({ cantidad : req.params.cantidad});
@@ -111,14 +129,5 @@ rutas.get('/asistenciaPorCantidad/:cantidad', async (req, res) => {
     }
 });
 
-//endpoint 6 - obtener asistencia por un materias especificas
-rutas.get('/asistenciaPorMaterias/:materias', async (req, res) => {
-    try {
-        const asistenciaCurso = await AsistenciaModel.find({ materias: new RegExp(req.params.materias, 'i')});
-        return res.json(AsistenciaMaterias);
-    } catch(error) {
-        res.status(500).json({ mensaje :  error.message})
-    }
-});
 
 module.exports = rutas;

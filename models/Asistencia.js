@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
-//definir el esquema
+
+// Definir el esquema
 const AsistenciaSchema = new mongoose.Schema({
-    // nombreCurso: { type: String, require: true}
     curso: String,
     materias: String,
-    cantidad: Number
+    cantidad: Number,
+    fechaInicio: Date,
+    fechaFinal: Date 
 });
 
-const AsistenciaModel = mongoose.model('Asistencia', AsistenciaSchema, 'asistencia');
-module.exports = AsistenciaModel;
+// Crear el modelo
+const AsistenciaModel = mongoose.model('Asistencia', AsistenciaSchema);
 
+module.exports = AsistenciaModel;
 
