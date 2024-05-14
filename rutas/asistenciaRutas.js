@@ -53,7 +53,7 @@ rutas.delete('/eliminar/:id',async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - 5. obtener Asistencia al curso por  ID
+// - 5. obtener Asistencia al curso por ID
 rutas.get('/obtenerAsistencia/:id', async (req, res) => {
     try {
         console.log("entro a get")
@@ -118,6 +118,11 @@ rutas.get('/ordenarAsistencia', async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
+
+
+
+
+
 // - 10. obtener asistencia por cantidad
 rutas.get('/asistenciaPorCantidad/:cantidad', async (req, res) => {
     try {
