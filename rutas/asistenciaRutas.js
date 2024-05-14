@@ -32,7 +32,7 @@ rutas.put('/editar/:id', async (req, res) => {
     try {
         const asistenciaEditada = await AsistenciaModel.findByIdAndUpdate(req.params.id, req.body, { new : true });
         if (!asistenciaEditada)
-            return res.status(404).json({ mensaje : 'Asistencia no encontrada!!!'});
+            return res.status(404).json({ mensaje : 'Asistencia del curso no encontrada!!!'});
         else
             return res.status(201).json(asistenciaEditada);
 
@@ -53,7 +53,7 @@ rutas.delete('/eliminar/:id',async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-// - 5. obtener una asistencia por su ID
+// - 5. obtener Asistencia al curso por  ID
 rutas.get('/obtenerAsistencia/:id', async (req, res) => {
     try {
         console.log("entro a get")
