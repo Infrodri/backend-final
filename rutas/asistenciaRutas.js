@@ -78,21 +78,16 @@ rutas.get('/materia/:materias', async (req, res) => {
 
 // - 7. eliminar todas las asistencias de las materias que sean menores a la cantidad X
 rutas.delete('/eliminarPorCantidad/:cantidad', async (req, res) => {
-    try {
+    try { // Verificar si la cantidad proporcionada es un número válido
         const cantidad = parseInt(req.params.cantidad);
-
-        if (isNaN(cantidad)) {        // Verificar si la cantidad proporcionada es un número válido
-
+        if (isNaN(cantidad)) {       
             return res.status(400).json({ mensaje: 'Por favor, proporcione una cantidad válida.' });
         }
-
         const { deletedCount } = await AsistenciaModel.deleteMany({ cantidad: { $lt: cantidad } });   // Buscar y eliminar por la cantidad menor a "X"
-
         if (deletedCount === 0) {        // Verificar si se eliminaron 
 
             return res.status(404).json({ mensaje: `No se encontraron asistencias con cantidad menor a ${cantidad}.` });
         }
-
         return res.json({ mensaje: `Se han eliminado ${deletedCount} asistencias con cantidad menor a ${cantidad}.` });
     } catch(error) {
         res.status(500).json({ mensaje: error.message });
