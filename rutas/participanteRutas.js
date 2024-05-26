@@ -51,17 +51,6 @@ rutas.delete('/eliminar/:id', async (req, res) => {
     }
 });
 
-// Endpoint 5. Obtener un participante por ID
-rutas.get('/obtenerParticipante/:id', async (req, res) => {
-    try {
-        const participante = await ParticipanteModel.findById(req.params.id);
-        if (!participante)
-            return res.status(404).json({ mensaje: 'Participante no encontrado!!!' });
-        else
-            return res.json(participante);
-    } catch (error) {
-        res.status(500).json({ mensaje: error.message });
-    }
-});
+
 
 module.exports = rutas;

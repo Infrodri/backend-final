@@ -8,6 +8,9 @@ require('dotenv').config();
 const app = express();
 // ruta
 const asistenciaRutas = require('./rutas/asistenciaRutas');
+const participanteRutas = require('./rutas/participanteRutas');  // Nueva 
+const asignacionRutas = require('./rutas/asignacionRutas');      // Nueva
+
 
 // configuraciones de environment
 const PORT = process.env.PORT || 3000;
@@ -39,4 +42,7 @@ const autenticar = async (req, res, next)=>{
 };
 //utilizar las rutas de asistencia
 app.use('/auth', authRutas);
-app.use('/apis', autenticar, asistenciaRutas);
+app.use('/apis/asistencia', autenticar, asistenciaRutas);
+app.use('/apis/participante', autenticar, participanteRutas);
+app.use('/apis/asignacion', autenticar, asignacionRutas); 
+
