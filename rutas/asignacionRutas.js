@@ -1,6 +1,7 @@
 const express = require('express');
 const rutas = express.Router();
-const AsignacionModel = require('../models/asignacion');
+const Asignacion = require('../models/asignacion');
+const Participante = require('../models/Participante');
 
 // Endpoint 1. Traer todas las asignaciones
 rutas.get('/getAsignaciones', async (req, res) => {
@@ -121,5 +122,19 @@ rutas.get('/getAsignacionesPorMateria', async (req, res) => {
         res.status(500).json({ mensaje: error.message });
     }
 });
+//asignacion de controladores
+exports.obtenerAsignacionesConParticipantes = async (req, res) => {
+    try {
+        const asignaciones = await Asignacion.find().populate('participanteId', 'nombre');
+        const resultado = asignaciones.map(asignacion => ({
+            Materia: asignacion.materia,
+            Participante: asignacion.participanteId ? asignacion.participanteId.nombre : 'N/A'
+        }));
+
+        res.status(200).json(resultado);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 module.exports = rutas;

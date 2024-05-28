@@ -1,108 +1,75 @@
-// const express = require('express');
-// const request = require('supertest');
-// const asistenciaRutas = require('../rutas/asistenciaRutas');
-// const AsistenciaModel = require('../models/Asistencia');
-// const mongoose = require('mongoose');
+const request = require('supertest');
+const express = require('express');
+const mongoose = require('mongoose');
+const AsistenciaModel = require('../models/Asistencia');
+const asistenciaRutas = require('../routes/asistenciaRutas');
 
-// // Configurar la aplicación de prueba
-// const app = express();
-// app.use(express.json());
-// app.use('/asistencia', asistenciaRutas);
+const app = express();
+app.use(express.json());
+app.use('/asistencia', asistenciaRutas);
 
-// describe('Pruebas Unitarias para Asistencia de cursos', () => {
-//     // Se ejecuta antes de iniciar las pruebas
-//     beforeEach(async () => {
-//         await mongoose.connect('mongodb://127.0.0.1:27017/appasistencias', {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true
-//         });
-//         await AsistenciaModel.deleteMany({});
-//     });
+beforeAll(async () => {
+    const url = 'mongodb://127.0.0.1/test_database';
+    await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+});
 
-//     // Se ejecuta al finalizar todas las pruebas
-//     afterAll(() => {
-//         return mongoose.connection.close();
-//     });
+afterAll(async () => {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+});
 
-//     // Test para traer todas las asistencias
-//     test('Debería traer todas las asistencias de curso: GET /asistencia/getAsistencia', async () => {
-//         await AsistenciaModel.create([
-//             {
-//                 curso: 'Curso 1',
-//                 materias: 'Matemáticas',
-//                 cantidad: 30,
-//                 fechaInicio: '2024-05-20',
-//                 fechaFinal: '2025-05-20'
-//             },
-//             {
-//                 curso: 'Curso 2',
-//                 materias: 'Ciencias',
-//                 cantidad: 25,
-//                 fechaInicio: '2024-06-15',
-//                 fechaFinal: '2025-06-15'
-//             }
-//         ]);
+describe('Asistencias API', () => {
+    beforeEach(async () => {
+        await AsistenciaModel.deleteMany();
+    });
 
-//         const res = await request(app).get('/asistencia/getAsistencia');
-//         expect(res.statusCode).toEqual(200);
-//         expect(res.body).toHaveLength(2);
-//     }, 10000);
+    it('debería crear una nueva asistencia', async () => {
+        const res = await request(app)
+            .post('/asistencia/crear')
+            .send({
+                fecha: '2023-05-01',
+                curso: 'Matemáticas',
+                cantidad: 30
+            });
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toHaveProperty('_id');
+        expect(res.body).toHaveProperty('fecha', '2023-05-01');
+        expect(res.body).toHaveProperty('curso', 'Matemáticas');
+        expect(res.body).toHaveProperty('cantidad', 30);
+    });
 
-//     // Test para agregar una nueva asistencia
-//     test('Debería agregar una nueva asistencia a curso: POST /asistencia/crear', async () => {
-//         const nuevaAsistencia = {
-//             curso: 'Curso 3',
-//             materias: 'Lenguaje',
-//             cantidad: 20,
-//             fechaInicio: '2024-07-01',
-//             fechaFinal: '2025-07-01'
-//         };
+    it('debería obtener todas las asistencias', async () => {
+        const asistencia = new AsistenciaModel({ fecha: '2023-05-01', curso: 'Matemáticas', cantidad: 30 });
+        await asistencia.save();
 
-//         const res = await request(app)
-//             .post('/asistencia/crear')
-//             .send(nuevaAsistencia);
-//         expect(res.statusCode).toEqual(201);
-//         expect(res.body.curso).toEqual(nuevaAsistencia.curso);
-//     });
+        const res = await request(app).get('/asistencia/getAsistencias');
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.length).toBe(1);
+        expect(res.body[0]).toHaveProperty('curso', 'Matemáticas');
+    });
 
-//     // Test para actualizar una asistencia
-//     test('Debería actualizar una asistencia existente: PUT /asistencia/editar/:id', async () => {
-//         const nuevaAsistencia = await AsistenciaModel.create({
-//             curso: 'Curso 4',
-//             materias: 'Historia',
-//             cantidad: 15,
-//             fechaInicio: '2024-08-01',
-//             fechaFinal: '2025-08-01'
-//         });
+    it('debería editar una asistencia', async () => {
+        const asistencia = new AsistenciaModel({ fecha: '2023-05-01', curso: 'Matemáticas', cantidad: 30 });
+        const savedAsistencia = await asistencia.save();
 
-//         const asistenciaEditada = {
-//             curso: 'Curso 4 Editado',
-//             materias: 'Historia Editada',
-//             cantidad: 20,
-//             fechaInicio: '2024-08-01',
-//             fechaFinal: '2025-08-01'
-//         };
+        const res = await request(app)
+            .put(`/asistencia/editar/${savedAsistencia._id}`)
+            .send({
+                curso: 'Física',
+                cantidad: 25
+            });
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toHaveProperty('curso', 'Física');
+        expect(res.body).toHaveProperty('cantidad', 25);
+    });
 
-//         const res = await request(app)
-//             .put(`/asistencia/editar/${nuevaAsistencia._id}`)
-//             .send(asistenciaEditada);
-//         expect(res.statusCode).toEqual(201);
-//         expect(res.body.curso).toEqual(asistenciaEditada.curso);
-//     });
+    it('debería eliminar una asistencia', async () => {
+        const asistencia = new AsistenciaModel({ fecha: '2023-05-01', curso: 'Matemáticas', cantidad: 30 });
+        const savedAsistencia = await asistencia.save();
 
-//     // Test para eliminar una asistencia
-//     test('Debería eliminar una asistencia existente: DELETE /asistencia/eliminar/:id', async () => {
-//         const nuevaAsistencia = await AsistenciaModel.create({
-//             curso: 'Curso 5',
-//             materias: 'Arte',
-//             cantidad: 10,
-//             fechaInicio: '2024-09-01',
-//             fechaFinal: '2025-09-01'
-//         });
+        const res = await request(app).delete(`/asistencia/eliminar/${savedAsistencia._id}`);
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('mensaje', 'Asistencia eliminada');
+    });
+});
 
-//         const res = await request(app)
-//             .delete(`/asistencia/eliminar/${nuevaAsistencia._id}`);
-//         expect(res.statusCode).toEqual(200);
-//         expect(res.body.mensaje).toEqual('ASistencia eliminada');
-//     });
-// });
