@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Definir el esquema
-const AsignacionSchema = new mongoose.Schema({
+const AsignacionSchema = mongoose.Schema({
     participanteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Participante' },
     materia: String
 });

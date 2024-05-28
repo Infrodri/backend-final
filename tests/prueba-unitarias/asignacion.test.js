@@ -1,9 +1,9 @@
 const request = require('supertest');
 const express = require('express');
 const mongoose = require('mongoose');
-const AsignacionModel = require('../models/Asignacion');
-const ParticipanteModel = require('../models/Participante');
-const asignacionRutas = require('../routes/asignacionRutas');
+const AsignacionModel = require('../../models/asignacion');
+const ParticipanteModel = require('../../models/Participante');
+const asignacionRutas = require('../../rutas/asignacionRutas');
 
 const app = express();
 app.use(express.json());
@@ -80,7 +80,7 @@ describe('Asignaciones API', () => {
         const asignacion = new AsignacionModel({ participanteId, materia: 'Test Materia' });
         await asignacion.save();
 
-        const res = await request(app).get('/asignacion/getAsignacionesConParticipantes');
+        const res = await request(app).get('/asignacion/obtenerAsignacionesConParticipantes');
         expect(res.statusCode).toEqual(200);
         expect(res.body.length).toBe(1);
         expect(res.body[0]).toHaveProperty('Materia', 'Test Materia');

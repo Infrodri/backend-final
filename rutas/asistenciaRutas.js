@@ -3,7 +3,7 @@ const rutas = express.Router();
 const AsistenciaModel = require('../models/Asistencia');
 
 //endpoint 1.  traer todas las cantidad de los cusos
-rutas.get('/getAsistencia', async (req, res) => {
+rutas.get('/getAsistencias', async (req, res) => {
     try  {
         const asistencia = await  AsistenciaModel.find();
         res.json(asistencia);
@@ -20,6 +20,7 @@ rutas.post('/crear', async (req, res) => {
         fechaInicio: req.body.fechaInicio,
         fechaFinal: req.body.fechaFinal
     })
+
     try {
         const nuevaAsistencia = await asistencia.save();
         res.status(201).json(nuevaAsistencia);
@@ -47,8 +48,8 @@ rutas.delete('/eliminar/:id',async (req, res) => {
        if (!asistenciaEliminada)
             return res.status(404).json({ mensaje : 'Asitencia no encontrada!!!'});
        else 
-            return res.json({mensaje :  'ASistencia eliminada'});    
-       } 
+            return res.json({mensaje :  'Asistencia eliminada'});    
+    } 
     catch (error) {
         res.status(500).json({ mensaje :  error.message})
     }

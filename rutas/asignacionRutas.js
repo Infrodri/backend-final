@@ -1,6 +1,6 @@
 const express = require('express');
 const rutas = express.Router();
-const Asignacion = require('../models/asignacion');
+const AsignacionModel = require('../models/asignacion');
 const Participante = require('../models/Participante');
 
 // Endpoint 1. Traer todas las asignaciones
@@ -30,7 +30,7 @@ rutas.post('/crear', async (req, res) => {
 // Endpoint 3. Editar una asignación
 rutas.put('/editar/:id', async (req, res) => {
     try {
-        const asignacionEditada = await AsignacionModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const asignacionEditada = await AsignacionModel.findByIdAndUpdate( req.params.id, req.body, { overwriteDiscriminatorKey: true, new: true });
         if (!asignacionEditada)
             return res.status(404).json({ mensaje: 'Asignación no encontrada!!!' });
         else
@@ -122,10 +122,12 @@ rutas.get('/getAsignacionesPorMateria', async (req, res) => {
         res.status(500).json({ mensaje: error.message });
     }
 });
+
 //asignacion de controladores
-exports.obtenerAsignacionesConParticipantes = async (req, res) => {
+rutas.get('/obtenerAsignacionesConParticipantes', async (req, res) => {
+// exports.obtenerAsignacionesConParticipantes = async (req, res) => {
     try {
-        const asignaciones = await Asignacion.find().populate('participanteId', 'nombre');
+        const asignaciones = await AsignacionModel.find().populate('participanteId', 'nombre');
         const resultado = asignaciones.map(asignacion => ({
             Materia: asignacion.materia,
             Participante: asignacion.participanteId ? asignacion.participanteId.nombre : 'N/A'
@@ -135,6 +137,6 @@ exports.obtenerAsignacionesConParticipantes = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
+});
 
 module.exports = rutas;

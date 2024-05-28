@@ -1,8 +1,8 @@
 const request = require('supertest');
 const express = require('express');
 const mongoose = require('mongoose');
-const AsistenciaModel = require('../models/Asistencia');
-const asistenciaRutas = require('../routes/asistenciaRutas');
+const AsistenciaModel = require('../../models/Asistencia');
+const asistenciaRutas = require('../../rutas/asistenciaRutas');
 
 const app = express();
 app.use(express.json());
@@ -27,13 +27,15 @@ describe('Asistencias API', () => {
         const res = await request(app)
             .post('/asistencia/crear')
             .send({
-                fecha: '2023-05-01',
+                fechaInicio: '2023-05-01',
                 curso: 'Matemáticas',
                 cantidad: 30
             });
+            
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('_id');
-        expect(res.body).toHaveProperty('fecha', '2023-05-01');
+        
+        expect(res.body).toHaveProperty('fechaInicio', '2023-05-01T00:00:00.000Z');
         expect(res.body).toHaveProperty('curso', 'Matemáticas');
         expect(res.body).toHaveProperty('cantidad', 30);
     });

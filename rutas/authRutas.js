@@ -4,6 +4,22 @@ const Usuario = require('../models/Usuario');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// Middleware para verificar tokens y lista negra
+const verificarToken = (req, res, next) => {
+    const token = req.headers['authorization'].replace('Bearer ', '');
+    if (!token) return res.status(401).json({ error: 'Token no proporcionado' });
+    if (tokenBlacklist.includes(token)) return res.status(401).json({ error: 'Token inválido' });
+
+    jwt.verify(token, 'clave_secreta', (err, decoded) => {
+        if (err) return res.status(401).json({ error: 'Token inválido' });
+        req.usuarioId = decoded.usuarioId;
+        next();
+    });
+};
+
+// Utilizar middleware para proteger las rutas
+rutas.use(verificarToken);
+
 // Registro de usuario
 rutas.post('/registro', async (req, res) => {
     try {
@@ -36,9 +52,9 @@ rutas.post('/iniciarsesion', async (req, res) => {
 let tokenBlacklist = [];
 
 // Cierre de sesión
-rutas.post('/cerrarsesion', (req, res) => {
+rutas.post('/cerrarsesion', verificarToken, (req, res) => {
     try {
-        const token = req.headers['authorization'];
+        const token = req.headers['authorization'].replace('Bearer ', '');
         if (!token) return res.status(400).json({ error: 'Token no proporcionado' });
         tokenBlacklist.push(token);
         res.status(200).json({ mensaje: 'Sesión cerrada correctamente' });
@@ -46,21 +62,5 @@ rutas.post('/cerrarsesion', (req, res) => {
         res.status(500).json({ mensaje: error.message });
     }
 });
-
-// Middleware para verificar tokens y lista negra
-const verificarToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(401).json({ error: 'Token no proporcionado' });
-    if (tokenBlacklist.includes(token)) return res.status(401).json({ error: 'Token inválido' });
-
-    jwt.verify(token, 'clave_secreta', (err, decoded) => {
-        if (err) return res.status(401).json({ error: 'Token inválido' });
-        req.usuarioId = decoded.usuarioId;
-        next();
-    });
-};
-
-// Utilizar middleware para proteger las rutas
-rutas.use(verificarToken);
 
 module.exports = rutas;
